@@ -8,7 +8,7 @@ function mysech = genSech180(sweepWidth, duration)
 % sechlen = 4.0 / dt;
 % beta = 1;
 % k = 1;
-%
+% Created by Prof. Luis Hernandez Garcia
 
 dt = 1e-3;
 sech_dur = duration;
