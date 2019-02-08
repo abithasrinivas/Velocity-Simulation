@@ -1,5 +1,4 @@
-function [B1 Gz] = newvelsim (seg,ref,n)
-%
+function [B G] = newvelsim (seg,ref,n,t)
 %This function is to create a B1 and Gz pulse with velocity encoded
 %gradient and a composite RF pulse with double refocussers interleaved
 %between them - Refer Qin et al MRM 2016
@@ -12,12 +11,13 @@ function [B1 Gz] = newvelsim (seg,ref,n)
 %         example - bhard180 for hard reforcusser pulse
 %         n - choose according to FA chosen for seg pulse 
 %         8 for 9 segs(20 deg) , 5 for 6 segs (30deg), 17 for 18 segs (10 deg)
+%         dt - simulation interval ms
 % Outputs: B1 and Gz of same length
 % Author : Sai Abitha Srinivas 
 
-dt = 1e-3;
-B1 = [];
-Gz = [];
+dt = t;
+B = [];
+G = [];
 Mzfinal = [];
 mlev_phases = repmat([1 1 -1 -1   -1 1 1 -1   -1 -1 1 1    1 -1 -1 1], [1,4]);
 hard90 = (0.0195e-4 )* ones(1/dt,1);
@@ -32,7 +32,6 @@ trap = [
     [ramp_len-1:-1:0]'/(ramp_len-1);
     ]*Gvs;
 trap_len = length(trap);
-
 
 %Sinc1lobe
 Sinc1 = sinc(linspace(-4,4, 1/dt));
@@ -138,12 +137,12 @@ Sech90 = 1000*(0.117e-4/2) * mysech/sum(mysech);
 %Sech 180 degrees
 Sech180 = 1000*(0.117e-4) * mysech/sum(mysech);
 
-x = seg;
-y = ref;
+x = eval(seg);
+y = eval(ref);
 
 for i = 1: n 
     
-    Gz = [Gz;
+    G = [G;
         zeros(size(x));
         trap;
         zeros(size(y));                                                       
@@ -153,7 +152,7 @@ for i = 1: n
         -trap;
         ];
     
-    B1 = [B1;
+    B = [B;
         x;
         zeros(size(trap));
         y * mlev_phases(2*n-1);  
@@ -165,7 +164,7 @@ for i = 1: n
 
 end
 
-B1 = [B1; x];
-Gz = [ Gz ;zeros(size(x))]; 
+B = [B; x];
+G = [ G ;zeros(size(x))]; 
 
 

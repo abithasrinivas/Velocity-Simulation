@@ -5,12 +5,32 @@
 %                            gensech180
 %
 %Author: Sai Abitha Srinivas 
+clear all;
+close all;
 
-segmentpulse = bhard20;%change as required
-refpulse = bhard180; %change as required
+accel = 0 ; % in cm/ms^2
+vel = 0  ; % in cm/ms
+pos0 = 0 ;  % cm
+
+homogeneity = 'perfect'; % 'perfect'  % 'bad_B0_B1'
+
+switch homogeneity
+    case 'bad_B0'
+        off_resonance =    100e-3 / 42576 ; % (KHz --> Tesla) ... gammabar is in kHz/T
+        
+    case 'bad_B0_B1'
+        off_resonance =   100e-3 / 42576 ; % (KHz --> Tesla) ... gammabar is in kHz/T
+        
+    case 'perfect'
+        off_resonance = 0%  100e-3 / 42576 ; % (KHz --> Tesla) ... gammabar is in kHz/T
+end
+
+segmentpulse = 'bhard20';%change as required
+refpulse = 'bhard180' ; %change as required
 n = 8; %change as per segmentpulse FA
+dt = 1e-3;
 
-[B1 Gz] =newvelsim(segmentpulse,refpulse,n)
+[B1 Gz] =newvelsim(segmentpulse,refpulse,n,dt)
 Mzfinal =[]; 
 isControl = 0; %change as reqd 
 
@@ -48,7 +68,6 @@ t=[0:length(Gz)-1]*dt;
 subplot(321)
 area(t, Gz/max(Gz));
 grid on
-title(str);
 subplot(323)
 plot(t, abs(B1)/max(abs(B1)),'r');
 grid on
